@@ -102,7 +102,7 @@ We welcome contributions to improve the SEO Tools. To contribute, please follow 
 
 ### Contact
 
-For any queries or support, please contact [(zainlokhandwala21@gmail.com).
+For any queries or support, please contact (zainlokhandwala21@gmail.com).
 
 ---
 
