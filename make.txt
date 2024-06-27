@@ -1,0 +1,43 @@
+
+    username=request.session.get('uname')
+    userid=request.session.get('uid')  # Initialize analysis_results
+    if request.method == 'GET':
+        return render(request, 'projectadd.html')
+    elif request.method == 'POST':
+        url = request.POST.get('purl')
+        output_dir = request.POST.get('pname')  # Get the filename from the form
+        satus=request.POST.get('satus')
+        print("url:",url,"\n","name of project:",output_dir,"\n","satus:",satus)
+        
+
+        import os
+        import  json
+        def load_crawled_data(output_dir):
+            crawled_data = {}
+            for root, dirs, files in os.walk(output_dir):
+                for file in files:
+                    if file.endswith(".json"):
+                        file_path = os.path.join(root, file)
+                        with open(file_path, 'r', encoding='utf-8') as f:
+                            data = json.load(f)
+                            crawled_data[data['url']] = data
+            return crawled_data
+        if url:
+            if output_dir:  # Check if filename is provided
+                con=sql.connect(host="localhost",user="root",password="Zainab.2001",database="website")
+                cur=con.cursor()
+                query="insert into res_project_detail (url,pname,status,userid_id) values (%s,%s,%s,%s)"
+                cur.execute(query,(url,output_dir,satus,userid))
+                con.commit()
+
+                links =crawl_website(url, output_dir)
+                analysis_results, keyword_frequencies, analysis_summary = crawl_website(url, output_dir)
+            else:
+                # If filename is not provided, use a default filename
+                output_dir = 'links.txt'
+                links = crawl_website(url, output_dir)
+                analysis_results, keyword_frequencies, analysis_summary = crawl_website(url, output_dir)
+            
+            if links:
+                pass
+    return render(request, 'show.html', {'username': username, 'analysis_results': analysis_results,'url':url,'keyword_frequencies':keyword_frequencies,'analysis_summary':analysis_summary})
